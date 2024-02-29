@@ -1,16 +1,21 @@
 #include "types.h"
 #include "stat.h"
 #include "user.h"
+#include "spinlock.h"
 // We want Child.] to execute first, then Child 2, and finally Parent.
 int main()
 {
+    struct spinlock lk;
+    init_lock(&lk);
     int pid = fork();
     if (pid < 0)
         printf(1, "Error forking first child.\n");
     else if (pid == 0)
     {
+        lock(&lk);
         sleep(5);
         printf(1, "Child 1 Executing\n");
+        unlock(&lk);
     }
     else
     {
